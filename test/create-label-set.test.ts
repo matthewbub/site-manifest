@@ -176,6 +176,26 @@ describe("createLabelSet", () => {
     ]);
   });
 
+  it("accepts pre-parsed repeater arrays", () => {
+    const labelSet = createLabelSet({
+      manifest,
+      locale: "en",
+      labels: {
+        en: {
+          faq: {
+            faqItems: [
+              { question: "Parsed", answer: "Already an array" },
+            ],
+          },
+        },
+      },
+    });
+
+    expect(labelSet.items("faq", "faqItems")).toEqual([
+      { question: "Parsed", answer: "Already an array" },
+    ]);
+  });
+
   it("resolves hidden state from serialized metadata", () => {
     const labelSet = createLabelSet({
       manifest,
@@ -193,6 +213,25 @@ describe("createLabelSet", () => {
 
     expect(labelSet.hidden("hero", "titleLabel")).toBe(true);
     expect(labelSet.hidden("hero", "descriptionLabel")).toBe(false);
+  });
+
+  it("accepts object hidden metadata and keeps unknown group keys safe", () => {
+    const labelSet = createLabelSet({
+      manifest,
+      locale: "en",
+      labels: {
+        en: {
+          hero: {
+            _hidden: {
+              descriptionLabel: true,
+            },
+          },
+        },
+      },
+    });
+
+    expect(labelSet.hidden("hero", "descriptionLabel")).toBe(true);
+    expect(labelSet.group("hero", "missingGroup")).toEqual({});
   });
 
   it("returns safe empty values for unknown sections and keys", () => {

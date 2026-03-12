@@ -56,12 +56,7 @@ export type SiteManifest = {
   sections: SectionManifest[];
 };
 
-export type PersistedLabelValue =
-  | string
-  | Record<string, string>
-  | undefined;
-
-export type PersistedSectionLabels = Record<string, PersistedLabelValue>;
+export type PersistedSectionLabels = Record<string, unknown>;
 
 export type PersistedLabels = Record<string, Record<string, PersistedSectionLabels>>;
 
