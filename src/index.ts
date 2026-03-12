@@ -15,6 +15,7 @@ export type {
 } from "./types.js";
 export type { CreateLabelSetArgs } from "./create-label-set.js";
 export { createLabelSet } from "./create-label-set.js";
+export { weddingManifest } from "./examples/wedding-manifest.js";
 export { defineSiteManifest } from "./define-site-manifest.js";
 export { getField } from "./helpers/get-field.js";
 export { getSection } from "./helpers/get-section.js";
