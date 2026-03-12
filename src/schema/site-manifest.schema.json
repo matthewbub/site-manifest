@@ -1,0 +1,216 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://site-manifest.dev/schema/site-manifest.schema.json",
+  "type": "object",
+  "required": ["id", "locales", "sections"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "locales": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/section"
+      }
+    }
+  },
+  "$defs": {
+    "localizedStringMap": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1
+      },
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "groupChildField": {
+      "type": "object",
+      "required": ["key", "label"],
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "defaultValue": {
+          "$ref": "#/$defs/localizedStringMap"
+        }
+      }
+    },
+    "repeaterItemField": {
+      "type": "object",
+      "required": ["key", "label", "kind"],
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "enum": ["text", "textarea"]
+        }
+      }
+    },
+    "repeaterItemsByLocale": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1
+      },
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1
+          },
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "textField": {
+      "type": "object",
+      "required": ["key", "label", "kind"],
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "enum": ["text", "textarea"]
+        },
+        "hideable": {
+          "type": "boolean"
+        },
+        "defaultValue": {
+          "$ref": "#/$defs/localizedStringMap"
+        }
+      }
+    },
+    "groupField": {
+      "type": "object",
+      "required": ["key", "label", "kind", "fields"],
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "const": "group"
+        },
+        "fields": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/groupChildField"
+          }
+        }
+      }
+    },
+    "repeaterField": {
+      "type": "object",
+      "required": ["key", "label", "kind", "itemFields"],
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "const": "repeater"
+        },
+        "hideable": {
+          "type": "boolean"
+        },
+        "itemFields": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/repeaterItemField"
+          }
+        },
+        "defaultItems": {
+          "$ref": "#/$defs/repeaterItemsByLocale"
+        }
+      }
+    },
+    "labelField": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/textField"
+        },
+        {
+          "$ref": "#/$defs/groupField"
+        },
+        {
+          "$ref": "#/$defs/repeaterField"
+        }
+      ]
+    },
+    "section": {
+      "type": "object",
+      "required": ["id", "title", "enabledByDefault", "labels"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "enabledByDefault": {
+          "type": "boolean"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/labelField"
+          }
+        }
+      }
+    }
+  }
+}
