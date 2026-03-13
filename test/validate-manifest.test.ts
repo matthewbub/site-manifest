@@ -23,8 +23,8 @@ describe("validateManifest", () => {
               label: "FAQ Items",
               kind: "repeater",
               itemFields: [
-                { key: "question", label: "Question", kind: "text" },
-                { key: "answer", label: "Answer", kind: "textarea" },
+                { key: "question", label: "Question", kind: "string", input: "text" },
+                { key: "answer", label: "Answer", kind: "string", input: "textarea" },
               ],
             },
           ],
@@ -133,6 +133,48 @@ describe("validateManifest", () => {
     };
 
     expect(isValidManifest(manifest)).toBe(false);
+  });
+
+  it("rejects legacy text and textarea field kinds", () => {
+    const textManifest = {
+      id: "site",
+      locales: ["en"],
+      sections: [
+        {
+          id: "hero",
+          title: "Hero",
+          enabledByDefault: true,
+          labels: [
+            {
+              key: "titleLabel",
+              label: "Title",
+              kind: "text",
+            },
+          ],
+        },
+      ],
+    };
+    const textareaManifest = {
+      id: "site",
+      locales: ["en"],
+      sections: [
+        {
+          id: "hero",
+          title: "Hero",
+          enabledByDefault: true,
+          labels: [
+            {
+              key: "descriptionLabel",
+              label: "Description",
+              kind: "textarea",
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(isValidManifest(textManifest)).toBe(false);
+    expect(isValidManifest(textareaManifest)).toBe(false);
   });
 
   it("publishes a draft 2020-12 schema id", () => {

@@ -15,7 +15,8 @@ describe("defineSiteManifest", () => {
             {
               key: "subtitleLabel",
               label: "Subtitle",
-              kind: "text",
+              kind: "string",
+              input: "text",
               defaultValue: {
                 en: "We're getting married",
               },
@@ -25,7 +26,10 @@ describe("defineSiteManifest", () => {
       ],
     });
 
-    expect(manifest.sections[0]?.labels[0]?.kind).toBe("text");
+    expect(manifest.sections[0]?.labels[0]?.kind).toBe("string");
+    expect(manifest.sections[0]?.labels[0]).toMatchObject({
+      input: "text",
+    });
     expect(manifest.id).toBe("wedding");
   });
 });
