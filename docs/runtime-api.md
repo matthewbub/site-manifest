@@ -11,20 +11,7 @@ createLabelSet({
 });
 ```
 
-Arguments:
-
-- `manifest`: validated site manifest
-- `labels`: persisted label overrides grouped by locale and section
-- `locale`: active locale
-- `hiddenKey`: optional metadata key for hidden label state
-
-Default `hiddenKey`:
-
-```ts
-"_hidden"
-```
-
-## Return Shape
+## Return shape
 
 ```ts
 type LabelSet = {
@@ -36,66 +23,48 @@ type LabelSet = {
 };
 ```
 
-## Resolution Rules
+## Quick behavior
 
-### `section(sectionId)`
+### `value()`
 
-Returns the resolved label object for one section.
+```ts
+labelSet.value("hero", "title");
+// "Welcome"
+```
 
-Behavior:
+Returns `""` for missing or non-string fields.
 
-- resolves defaults from the manifest
-- overlays non-empty persisted string overrides
-- overlays group child overrides over group defaults
-- does not include repeater values directly in the returned section object
+### `group()`
 
-### `value(sectionId, key)`
+```ts
+labelSet.group("navigation", "links");
+// { home: "Home", features: "Features" }
+```
 
-Returns a single string field.
+Returns `{}` for missing or non-group fields.
 
-Behavior:
+### `items()`
 
-- intended for `string` fields
-- returns `""` for unknown sections, unknown keys, or non-string values
+```ts
+labelSet.items("faq", "items");
+// [{ question: "Question", answer: "Answer" }]
+```
 
-### `group(sectionId, key)`
+Reads persisted JSON string overrides when present and falls back to manifest defaults.
 
-Returns a string map for a `group` field.
+### `hidden()`
 
-Behavior:
+```ts
+labelSet.hidden("hero", "title");
+// false
+```
 
-- merges child defaults with child overrides
-- ignores blank string overrides
-- returns `{}` for missing or non-group fields
+Reads hidden metadata from `labels[locale][sectionId][hiddenKey]`.
 
-### `items(sectionId, key)`
-
-Returns structured repeater items.
-
-Behavior:
-
-- reads persisted JSON string overrides when present
-- accepts array values if the caller already parsed them
-- falls back to manifest defaults when parsing fails
-- returns `[]` for unknown sections or non-repeater fields
-
-### `hidden(sectionId, key)`
-
-Resolves hidden metadata for a field.
-
-Behavior:
-
-- reads from `labels[locale][sectionId][hiddenKey]`
-- accepts a JSON string or plain object map
-- only `true` is treated as hidden
-- invalid metadata falls back to `false`
-
-## Override Precedence
-
-Precedence is:
+## Precedence
 
 1. valid non-empty persisted overrides
 2. manifest defaults
-3. empty value fallback
+3. empty fallback
 
-Blank string overrides do not replace defaults in v1.
+Blank string overrides do not replace defaults.

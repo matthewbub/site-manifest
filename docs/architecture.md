@@ -1,88 +1,44 @@
 # Architecture
 
-## Goal
+## Purpose
 
-`site-manifest` formalizes a contract between:
+`site-manifest` is a small contract layer between:
 
-- an editing surface that needs to know what fields exist
-- a tenant/runtime layer that needs resolved labels
+- an editor that needs to know what fields exist
+- a runtime that needs resolved values
 
-The package intentionally stays framework-agnostic. It is a TypeScript/JavaScript library, not a React package.
+It is framework-agnostic and owns only manifest structure, validation, and value resolution.
 
-## Three Layers
+## Three layers
 
-### 1. JSON Schema
+### JSON Schema
 
-The JSON Schema in [`src/schema/site-manifest.schema.json`](../src/schema/site-manifest.schema.json) is the formal contract.
+Formal validation for manifests.
 
-It is the right layer for:
+### TypeScript authoring
 
-- runtime validation
-- CI enforcement
-- interoperability across package boundaries
-- future tooling such as manifest linting or codegen
+`defineSiteManifest()` gives a typed authoring surface.
 
-### 2. TypeScript Authoring API
+### Runtime resolver
 
-The TypeScript surface gives developers an ergonomic way to define manifests:
+`createLabelSet()` merges:
 
-- `defineSiteManifest()`
-- typed field definitions
-- typed section definitions
+- manifest defaults
+- persisted overrides
+- locale
+- hidden metadata
 
-This layer is for authoring convenience and editor support. It does not replace schema validation.
-
-### 3. Runtime Resolver
-
-`createLabelSet()` is the runtime access layer.
-
-It binds:
-
-- a manifest
-- persisted labels
-- a locale
-- hidden metadata settings
-
-into a small object API:
-
-- `section()`
-- `value()`
-- `group()`
-- `items()`
-- `hidden()`
-
-This avoids repeating ad hoc default/override merge logic in each tenant runtime or editor.
-
-## Why The Vocabulary Is Small
-
-The field vocabulary is intentionally limited to:
+## Core vocabulary
 
 - `string`
 - `group`
 - `repeater`
 
-This keeps the contract generic and reusable. FAQ is modeled as a `repeater`, not as a hard-coded domain concept.
+`input: "text" | "textarea"` is optional editor metadata, not a semantic field kind.
 
-Editor preferences such as single-line versus multi-line inputs live in optional
-metadata like `input: "text" | "textarea"`. That keeps UI conventions out of
-the core data model.
-
-## Boundaries
-
-This package owns:
-
-- section definitions
-- label field definitions
-- locale-aware defaults
-- manifest validation
-- label resolution rules
-
-This package does not own:
+## Out of scope
 
 - React components
-- visual theming
-- page rendering
-- media uploads
-- full content document schemas
-
-Those can be layered on later, but they are intentionally out of scope for v1.
+- rendering systems
+- media/content models
+- tenant-specific business logic

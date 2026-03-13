@@ -2,151 +2,94 @@
 
 ## Goal
 
-Move from a theme-specific label registry to a shared manifest contract without changing persisted label storage up front.
+Move from a legacy label config to:
 
-## Current Registry Pattern
-
-Many existing systems use a shape like:
-
-- section ids
-- label definitions
-- locale defaults
-- special-case helpers for grouped labels or FAQ defaults
-
-That typically spreads logic across:
-
-- registry config
-- editor rendering logic
-- runtime default-merging logic
-
-## Target Pattern
-
-Replace that with:
-
-1. a single manifest definition
+1. a manifest
 2. schema validation
 3. `createLabelSet()` for runtime resolution
 
-## Mapping Guide
+## Shape mapping
 
-### Registry section
+### Section
 
-Old:
+Before:
 
 ```ts
-{
-  id: "faq",
-  displayName: "FAQ",
-  labels: [...]
-}
+{ id: "hero", displayName: "Hero", labels: [...] }
 ```
 
-New:
+After:
 
 ```ts
-{
-  id: "faq",
-  title: "FAQ",
-  enabledByDefault: true,
-  labels: [...]
-}
+{ id: "hero", title: "Hero", enabledByDefault: true, labels: [...] }
 ```
 
-### String field
+### Single label
 
-Old:
+Before:
 
 ```ts
-{
-  key: "titleLabel",
-  displayName: "Title",
-  defaults: {
-    en: "FAQ",
-    es: "Preguntas",
-  },
-}
+{ key: "title", defaults: { en: "Welcome" } }
 ```
 
-New:
+After:
 
 ```ts
 {
-  key: "titleLabel",
+  key: "title",
   label: "Title",
   kind: "string",
   input: "text",
-  defaultValue: {
-    en: "FAQ",
-    es: "Preguntas",
-  },
+  defaultValue: { en: "Welcome" },
 }
 ```
 
-### FAQ items
+### Grouped labels
 
-Old:
+Before:
+
+```ts
+{ key: "links", value: { home: "Home" } }
+```
+
+After:
 
 ```ts
 {
-  key: "faqItems",
-  type: "faqItems",
-  faqDefaults: {
-    en: [...],
-    es: [...],
-  },
+  key: "links",
+  label: "Links",
+  kind: "group",
+  fields: [{ key: "home", label: "Home", defaultValue: { en: "Home" } }],
 }
 ```
 
-New:
+### Repeatable items
+
+Before:
+
+```ts
+{ key: "items", defaults: [{ question: "Q", answer: "A" }] }
+```
+
+After:
 
 ```ts
 {
-  key: "faqItems",
-  label: "FAQ Items",
+  key: "items",
+  label: "Items",
   kind: "repeater",
   itemFields: [
     { key: "question", label: "Question", kind: "string", input: "text" },
     { key: "answer", label: "Answer", kind: "string", input: "textarea" },
   ],
-  defaultItems: {
-    en: [...],
-    es: [...],
-  },
+  defaultItems: { en: [{ question: "Q", answer: "A" }] },
 }
 ```
 
-### Nav labels
+## Migration steps
 
-Old:
-
-- special `navLabels` object merging
-
-New:
-
-```ts
-{
-  key: "navLabels",
-  label: "Navigation Labels",
-  kind: "group",
-  fields: [
-    { key: "home", label: "Home", defaultValue: { en: "Home" } },
-    { key: "faq", label: "FAQ", defaultValue: { en: "FAQ" } },
-  ],
-}
-```
-
-## Migration Steps
-
-1. Convert the existing registry data into a manifest file.
-2. Validate the new manifest with `validateManifest()`.
-3. Replace default lookup helpers with `createLabelSet()`.
-4. Update the editor to render by `kind` instead of registry-specific switch logic.
-   - for `kind: "string"`, use `input` if a UI needs to choose between a text input and textarea
-5. Keep persisted labels unchanged until a later phase.
-
-## What Does Not Need To Change Yet
-
-- tenant site rendering components
-- React architecture
-- persisted label storage shape
-- media/content modeling
+1. Convert the old config into a manifest.
+2. Validate it with `validateManifest()`.
+3. Replace custom default-merging logic with `createLabelSet()`.
+4. If an editor needs widget hints, read `input` for `string` fields.
+5. Keep persisted label storage unchanged until a separate migration is needed.

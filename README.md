@@ -1,15 +1,12 @@
 # site-manifest
 
-Framework-agnostic site manifest contract for labels and sections.
+Framework-agnostic manifest contract for labels and sections.
 
 `site-manifest` gives you:
 
-- a JSON Schema-backed manifest format
-- a typed `defineSiteManifest()` authoring API
-- a runtime `createLabelSet()` resolver for defaults + overrides
-
-Scalar labels use `kind: "string"`. If an editor needs a rendering hint, add
-`input: "text"` or `input: "textarea"` as optional metadata.
+- JSON Schema validation
+- typed manifest authoring
+- runtime label resolution
 
 ## Install
 
@@ -17,13 +14,57 @@ Scalar labels use `kind: "string"`. If an editor needs a rendering hint, add
 pnpm add site-manifest
 ```
 
-## Define a simple manifest
+## Mental model
+
+- `string` = one label
+- `group` = keyed labels
+- `repeater` = array of structured items
+
+`input: "text" | "textarea"` is optional editor metadata for `string` fields.
+
+## Define fields
+
+```ts
+{
+  key: "title",
+  label: "Title",
+  kind: "string",
+  input: "text",
+  defaultValue: { en: "Welcome" },
+}
+```
+
+```ts
+{
+  key: "links",
+  label: "Links",
+  kind: "group",
+  fields: [
+    { key: "home", label: "Home", defaultValue: { en: "Home" } },
+    { key: "features", label: "Features", defaultValue: { en: "Features" } },
+  ],
+}
+```
+
+```ts
+{
+  key: "items",
+  label: "Items",
+  kind: "repeater",
+  itemFields: [
+    { key: "question", label: "Question", kind: "string", input: "text" },
+    { key: "answer", label: "Answer", kind: "string", input: "textarea" },
+  ],
+}
+```
+
+## Define a small manifest
 
 ```ts
 import { defineSiteManifest } from "site-manifest";
 
 const manifest = defineSiteManifest({
-  id: "marketing-site",
+  id: "example-site",
   locales: ["en"],
   sections: [
     {
@@ -32,22 +73,10 @@ const manifest = defineSiteManifest({
       enabledByDefault: true,
       labels: [
         {
-          key: "titleLabel",
+          key: "title",
           label: "Title",
           kind: "string",
-          input: "text",
-          defaultValue: {
-            en: "Welcome to our site",
-          },
-        },
-        {
-          key: "descriptionLabel",
-          label: "Description",
-          kind: "string",
-          input: "textarea",
-          defaultValue: {
-            en: "Built with a schema-backed contract.",
-          },
+          defaultValue: { en: "Welcome" },
         },
       ],
     },
@@ -55,54 +84,7 @@ const manifest = defineSiteManifest({
 });
 ```
 
-## Define a repeater-backed FAQ section
-
-```ts
-import { defineSiteManifest } from "site-manifest";
-
-const manifest = defineSiteManifest({
-  id: "wedding",
-  locales: ["en", "es"],
-  sections: [
-    {
-      id: "faq",
-      title: "FAQ",
-      enabledByDefault: true,
-      labels: [
-        {
-          key: "titleLabel",
-          label: "Title",
-          kind: "string",
-          input: "text",
-          defaultValue: {
-            en: "FAQ",
-            es: "Preguntas",
-          },
-        },
-        {
-          key: "faqItems",
-          label: "FAQ Items",
-          kind: "repeater",
-          itemFields: [
-            { key: "question", label: "Question", kind: "string", input: "text" },
-            { key: "answer", label: "Answer", kind: "string", input: "textarea" },
-          ],
-          defaultItems: {
-            en: [
-              {
-                question: "When should I arrive?",
-                answer: "Please arrive by 4pm.",
-              },
-            ],
-          },
-        },
-      ],
-    },
-  ],
-});
-```
-
-## Validate a manifest
+## Validate
 
 ```ts
 import { validateManifest } from "site-manifest";
@@ -110,152 +92,35 @@ import { validateManifest } from "site-manifest";
 validateManifest(manifest);
 ```
 
-## Create a label set from manifest + persisted labels
+## Resolve values
 
 ```ts
-import {
-  createLabelSet,
-  defineSiteManifest,
-  validateManifest,
-} from "site-manifest";
-
-const manifest = defineSiteManifest({
-  id: "wedding",
-  locales: ["en", "es"],
-  sections: [
-    {
-      id: "faq",
-      title: "FAQ",
-      enabledByDefault: true,
-      labels: [
-        {
-          key: "titleLabel",
-          label: "Title",
-          kind: "string",
-          input: "text",
-          defaultValue: {
-            en: "FAQ",
-            es: "Preguntas",
-          },
-        },
-        {
-          key: "faqItems",
-          label: "FAQ Items",
-          kind: "repeater",
-          itemFields: [
-            { key: "question", label: "Question", kind: "string", input: "text" },
-            { key: "answer", label: "Answer", kind: "string", input: "textarea" },
-          ],
-          defaultItems: {
-            en: [
-              {
-                question: "When should I arrive?",
-                answer: "Please arrive by 4pm.",
-              },
-            ],
-          },
-        },
-      ],
-    },
-    {
-      id: "stickyNav",
-      title: "Sticky Navigation",
-      enabledByDefault: true,
-      labels: [
-        {
-          key: "navLabels",
-          label: "Navigation Labels",
-          kind: "group",
-          fields: [
-            {
-              key: "home",
-              label: "Home",
-              defaultValue: { en: "Home", es: "Inicio" },
-            },
-            {
-              key: "faq",
-              label: "FAQ",
-              defaultValue: { en: "FAQ", es: "Preguntas" },
-            },
-          ],
-        },
-      ],
-    },
-  ],
-});
-
-validateManifest(manifest);
+import { createLabelSet } from "site-manifest";
 
 const labelSet = createLabelSet({
   manifest,
   locale: "en",
   labels: {
     en: {
-      faq: {
-        titleLabel: "Questions",
-        faqItems: JSON.stringify([
-          {
-            question: "Where should I park?",
-            answer: "Use the north lot.",
-          },
-        ]),
-      },
-      stickyNav: {
-        navLabels: {
-          faq: "Questions",
-        },
-      },
-    },
-  },
-});
-```
-
-## Read section labels
-
-```ts
-const faqSection = labelSet.section("faq");
-```
-
-## Read one value
-
-```ts
-const faqTitle = labelSet.value("faq", "titleLabel");
-// "Questions"
-```
-
-## Read one group
-
-```ts
-const navLabels = labelSet.group("stickyNav", "navLabels");
-// { home: "Home", faq: "Questions" }
-```
-
-## Read one repeater
-
-```ts
-const faqItems = labelSet.items("faq", "faqItems");
-// [{ question: "Where should I park?", answer: "Use the north lot." }]
-```
-
-## Hidden label metadata
-
-```ts
-const hiddenLabelSet = createLabelSet({
-  manifest,
-  locale: "en",
-  labels: {
-    en: {
-      faq: {
-        _hidden: JSON.stringify({
-          titleLabel: true,
-        }),
+      hero: {
+        title: "Hello",
       },
     },
   },
 });
 
-hiddenLabelSet.hidden("faq", "titleLabel");
-// true
+labelSet.value("hero", "title");
+// "Hello"
+```
+
+## Resolve groups and repeaters
+
+```ts
+labelSet.group("navigation", "links");
+// { home: "Home", features: "Features" }
+
+labelSet.items("faq", "items");
+// [{ question: "Question", answer: "Answer" }]
 ```
 
 ## API
@@ -267,10 +132,3 @@ hiddenLabelSet.hidden("faq", "titleLabel");
 - `createLabelSet({ manifest, labels, locale, hiddenKey? })`
 - `getSection(manifest, sectionId)`
 - `getField(manifest, sectionId, key)`
-
-## Documentation
-
-- [`docs/architecture.md`](./docs/architecture.md)
-- [`docs/manifest-schema.md`](./docs/manifest-schema.md)
-- [`docs/runtime-api.md`](./docs/runtime-api.md)
-- [`docs/migration-guide.md`](./docs/migration-guide.md)
