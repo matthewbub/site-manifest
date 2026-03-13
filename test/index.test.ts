@@ -11,7 +11,8 @@ describe("public exports", () => {
       getManifestValidationErrors: expect.any(Function),
       isValidManifest: expect.any(Function),
       validateManifest: expect.any(Function),
-      weddingManifest: expect.any(Object),
     });
+    expect("weddingManifest" in pkg).toBe(false);
+    expect("exampleManifest" in pkg).toBe(false);
   });
 });
