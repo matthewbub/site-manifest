@@ -2,8 +2,6 @@
 
 Framework-agnostic manifest contract for labels and sections.
 
-Content-driven sites need a single source of truth for what editable text exists, where it lives, and what its defaults are — across locales. Without one, editor UIs, validation, and runtime rendering each invent their own field definitions and inevitably drift apart. `site-manifest` provides that shared contract: you define your content structure once as a typed manifest, validate it against a JSON Schema, and resolve locale-aware values at runtime.
-
 `site-manifest` gives you:
 
 - **JSON Schema validation** — catch structural errors before they reach production
@@ -134,12 +132,12 @@ labelSet.items("faq", "items");
 
 ## API
 
-| Function | Description |
-|----------|-------------|
-| `defineSiteManifest(manifest)` | Identity function that preserves literal types for authoring |
-| `validateManifest(manifest)` | Throws if the manifest fails schema validation |
-| `isValidManifest(manifest)` | Type-guard that returns `true` for a valid manifest |
-| `getManifestValidationErrors(manifest)` | Returns an array of validation error objects |
-| `createLabelSet({ manifest, labels, locale, hiddenKey? })` | Builds a cached locale-aware label resolver |
-| `getSection(manifest, sectionId)` | Look up a section by ID |
-| `getField(manifest, sectionId, key)` | Look up a field by section and key |
+| Function                                                   | Description                                                  |
+| ---------------------------------------------------------- | ------------------------------------------------------------ |
+| `defineSiteManifest(manifest)`                             | Identity function that preserves literal types for authoring |
+| `validateManifest(manifest)`                               | Throws if the manifest fails schema validation               |
+| `isValidManifest(manifest)`                                | Type-guard that returns `true` for a valid manifest          |
+| `getManifestValidationErrors(manifest)`                    | Returns an array of validation error objects                 |
+| `createLabelSet({ manifest, labels, locale, hiddenKey? })` | Builds a cached locale-aware label resolver                  |
+| `getSection(manifest, sectionId)`                          | Look up a section by ID                                      |
+| `getField(manifest, sectionId, key)`                       | Look up a field by section and key                           |
