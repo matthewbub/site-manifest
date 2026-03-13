@@ -68,6 +68,10 @@
         },
         "kind": {
           "type": "string",
+          "const": "string"
+        },
+        "input": {
+          "type": "string",
           "enum": ["text", "textarea"]
         }
       }
@@ -92,7 +96,7 @@
         }
       }
     },
-    "textField": {
+    "stringField": {
       "type": "object",
       "required": ["key", "label", "kind"],
       "additionalProperties": false,
@@ -107,10 +111,14 @@
         },
         "kind": {
           "type": "string",
-          "enum": ["text", "textarea"]
+          "const": "string"
         },
         "hideable": {
           "type": "boolean"
+        },
+        "input": {
+          "type": "string",
+          "enum": ["text", "textarea"]
         },
         "defaultValue": {
           "$ref": "#/$defs/localizedStringMap"
@@ -178,7 +186,7 @@
     "labelField": {
       "oneOf": [
         {
-          "$ref": "#/$defs/textField"
+          "$ref": "#/$defs/stringField"
         },
         {
           "$ref": "#/$defs/groupField"

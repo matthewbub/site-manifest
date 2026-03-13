@@ -12,7 +12,8 @@ export const weddingManifest = defineSiteManifest({
         {
           key: "subtitleLabel",
           label: "Subtitle",
-          kind: "text",
+          kind: "string",
+          input: "text",
           defaultValue: {
             en: "We're Getting Married",
             es: "¡Nos Casamos!",
@@ -21,7 +22,8 @@ export const weddingManifest = defineSiteManifest({
         {
           key: "titleLabel",
           label: "Title",
-          kind: "textarea",
+          kind: "string",
+          input: "textarea",
           defaultValue: {
             en: "Celebrate with us",
             es: "Celebra con nosotros",
@@ -66,7 +68,8 @@ export const weddingManifest = defineSiteManifest({
         {
           key: "titleLabel",
           label: "Title",
-          kind: "text",
+          kind: "string",
+          input: "text",
           defaultValue: {
             en: "FAQ",
             es: "Preguntas",
@@ -77,8 +80,8 @@ export const weddingManifest = defineSiteManifest({
           label: "FAQ Items",
           kind: "repeater",
           itemFields: [
-            { key: "question", label: "Question", kind: "text" },
-            { key: "answer", label: "Answer", kind: "textarea" },
+            { key: "question", label: "Question", kind: "string", input: "text" },
+            { key: "answer", label: "Answer", kind: "string", input: "textarea" },
           ],
           defaultItems: {
             en: [
