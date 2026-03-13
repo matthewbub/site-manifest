@@ -1,6 +1,6 @@
 {
   "name": "site-manifest",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "JSON-Schema-backed site manifest contract for labels and sections",
   "type": "module",
   "sideEffects": false,
