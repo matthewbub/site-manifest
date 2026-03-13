@@ -17,14 +17,23 @@ export type CreateLabelSetArgs = {
   hiddenKey?: string;
 };
 
+/**
+ * Narrows unknown values into simple string dictionaries used by group and repeater label data.
+ */
 function isStringRecord(value: unknown): value is Record<string, string> {
   return !!value && typeof value === "object" && !Array.isArray(value);
 }
 
+/**
+ * Normalizes persisted values so empty strings fall back to defaults the same way missing values do.
+ */
 function toNonEmptyString(value: unknown): string | undefined {
   return typeof value === "string" && value !== "" ? value : undefined;
 }
 
+/**
+ * Merges persisted group overrides with the manifest defaults for the requested locale.
+ */
 function resolveGroupValue(
   fields: GroupChildFieldDefinition[],
   rawValue: unknown,
@@ -41,6 +50,9 @@ function resolveGroupValue(
   return resolved;
 }
 
+/**
+ * Accepts either already-parsed repeater data or the serialized format commonly stored in persistence layers.
+ */
 function parseRepeaterValue(rawValue: unknown): RepeaterItem[] | undefined {
   if (Array.isArray(rawValue)) {
     return rawValue.filter(isStringRecord);
@@ -58,6 +70,9 @@ function parseRepeaterValue(rawValue: unknown): RepeaterItem[] | undefined {
   }
 }
 
+/**
+ * Converts persisted hidden-state data into a predictable boolean lookup map.
+ */
 function parseHiddenState(rawValue: unknown): Record<string, boolean> {
   if (rawValue && typeof rawValue === "object" && !Array.isArray(rawValue)) {
     return Object.fromEntries(
@@ -83,6 +98,9 @@ function parseHiddenState(rawValue: unknown): Record<string, boolean> {
   }
 }
 
+/**
+ * Returns the persisted overrides for one locale and section, or an empty object when none were saved.
+ */
 function getSectionOverrides(
   labels: PersistedLabels,
   locale: SiteLocale,
@@ -91,6 +109,10 @@ function getSectionOverrides(
   return labels[locale]?.[sectionId] ?? {};
 }
 
+/**
+ * Builds a read-focused helper around persisted labels so consumers can resolve defaults, groups, repeaters,
+ * and hidden state without repeating manifest traversal logic.
+ */
 export function createLabelSet({
   manifest,
   labels,
@@ -100,6 +122,9 @@ export function createLabelSet({
   const sectionCache = new Map<string, Record<string, unknown>>();
   const hiddenCache = new Map<string, Record<string, boolean>>();
 
+  /**
+   * Resolves all non-repeater values for a section once and caches the result for repeated reads.
+   */
   const getResolvedSection = (sectionId: string): Record<string, unknown> => {
     const cached = sectionCache.get(sectionId);
     if (cached) {
@@ -132,6 +157,9 @@ export function createLabelSet({
     return resolved;
   };
 
+  /**
+   * Lazily parses the persisted hidden flags for a section and caches the boolean map.
+   */
   const getHiddenMap = (sectionId: string): Record<string, boolean> => {
     const cached = hiddenCache.get(sectionId);
     if (cached) {
@@ -144,20 +172,24 @@ export function createLabelSet({
   };
 
   return {
+    /** Returns the resolved label values for a section, with manifest defaults already applied. */
     section(sectionId) {
       return getResolvedSection(sectionId);
     },
 
+    /** Returns a single string value for a field, defaulting to an empty string for missing or non-string values. */
     value(sectionId, key) {
       const rawValue = getResolvedSection(sectionId)[key];
       return typeof rawValue === "string" ? rawValue : "";
     },
 
+    /** Returns the resolved child values for a group field. */
     group(sectionId, key) {
       const rawValue = getResolvedSection(sectionId)[key];
       return isStringRecord(rawValue) ? rawValue : {};
     },
 
+    /** Returns repeater items from persisted data when available, otherwise falling back to localized defaults. */
     items(sectionId, key) {
       const field = getField(manifest, sectionId, key);
       if (!field || field.kind !== "repeater") {
@@ -172,6 +204,7 @@ export function createLabelSet({
       );
     },
 
+    /** Indicates whether a field is marked hidden in persisted section metadata. */
     hidden(sectionId, key) {
       return getHiddenMap(sectionId)[key] === true;
     },

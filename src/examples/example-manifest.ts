@@ -13,7 +13,6 @@ export const exampleManifest = defineSiteManifest({
           key: "title",
           label: "Title",
           kind: "string",
-          input: "text",
           defaultValue: {
             en: "Welcome",
           },
@@ -54,8 +53,8 @@ export const exampleManifest = defineSiteManifest({
           label: "Items",
           kind: "repeater",
           itemFields: [
-            { key: "question", label: "Question", kind: "string", input: "text" },
-            { key: "answer", label: "Answer", kind: "string", input: "textarea" },
+            { key: "question", label: "Question", kind: "string" },
+            { key: "answer", label: "Answer", kind: "string" },
           ],
           defaultItems: {
             en: [

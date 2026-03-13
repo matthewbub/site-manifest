@@ -2,14 +2,11 @@ export type SiteLocale = string;
 
 export type RepeaterItem = Record<string, string>;
 
-export type StringFieldInput = "text" | "textarea";
-
 export type StringFieldDefinition = {
   key: string;
   label: string;
   kind: "string";
   hideable?: boolean;
-  input?: StringFieldInput;
   defaultValue?: Partial<Record<SiteLocale, string>>;
 };
 
@@ -30,7 +27,6 @@ export type RepeaterItemFieldDefinition = {
   key: string;
   label: string;
   kind: "string";
-  input?: StringFieldInput;
 };
 
 export type RepeaterFieldDefinition = {

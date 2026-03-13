@@ -12,7 +12,6 @@ export type {
   SiteLocale,
   SiteManifest,
   StringFieldDefinition,
-  StringFieldInput,
 } from "./types.js";
 export type { CreateLabelSetArgs } from "./create-label-set.js";
 export { createLabelSet } from "./create-label-set.js";

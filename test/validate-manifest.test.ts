@@ -23,8 +23,8 @@ describe("validateManifest", () => {
               label: "FAQ Items",
               kind: "repeater",
               itemFields: [
-                { key: "question", label: "Question", kind: "string", input: "text" },
-                { key: "answer", label: "Answer", kind: "string", input: "textarea" },
+                { key: "question", label: "Question", kind: "string" },
+                { key: "answer", label: "Answer", kind: "string" },
               ],
             },
           ],
@@ -133,6 +133,31 @@ describe("validateManifest", () => {
     };
 
     expect(isValidManifest(manifest)).toBe(false);
+  });
+
+  it("rejects removed string input metadata", () => {
+    const manifest = {
+      id: "site",
+      locales: ["en"],
+      sections: [
+        {
+          id: "hero",
+          title: "Hero",
+          enabledByDefault: true,
+          labels: [
+            {
+              key: "titleLabel",
+              label: "Title",
+              kind: "string",
+              input: "text",
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(isValidManifest(manifest)).toBe(false);
+    expect(getManifestValidationErrors(manifest).some((issue) => issue.includes("must NOT have additional properties"))).toBe(true);
   });
 
   it("rejects legacy text and textarea field kinds", () => {

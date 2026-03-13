@@ -15,7 +15,6 @@ const manifest = defineSiteManifest({
           key: "titleLabel",
           label: "Title",
           kind: "string",
-          input: "text",
           defaultValue: {
             en: "Welcome",
             es: "Bienvenidos",
@@ -25,7 +24,6 @@ const manifest = defineSiteManifest({
           key: "descriptionLabel",
           label: "Description",
           kind: "string",
-          input: "textarea",
           defaultValue: {
             en: "Default description",
             es: "Descripcion por defecto",
@@ -67,8 +65,8 @@ const manifest = defineSiteManifest({
           label: "FAQ Items",
           kind: "repeater",
           itemFields: [
-            { key: "question", label: "Question", kind: "string", input: "text" },
-            { key: "answer", label: "Answer", kind: "string", input: "textarea" },
+            { key: "question", label: "Question", kind: "string" },
+            { key: "answer", label: "Answer", kind: "string" },
           ],
           defaultItems: {
             en: [{ question: "Q1", answer: "A1" }],
@@ -80,7 +78,7 @@ const manifest = defineSiteManifest({
 });
 
 describe("createLabelSet", () => {
-  it("resolves string defaults regardless of input metadata", () => {
+  it("resolves string defaults", () => {
     const labelSet = createLabelSet({
       manifest,
       locale: "en",

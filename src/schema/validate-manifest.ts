@@ -29,6 +29,9 @@ addFormats(ajv);
 
 const validator = ajv.compile<SiteManifest>(manifestSchema);
 
+/**
+ * Wraps schema validation failures in a single error object that is easy for callers to catch and display.
+ */
 export class ManifestValidationError extends Error {
   readonly issues: string[];
 
@@ -39,6 +42,9 @@ export class ManifestValidationError extends Error {
   }
 }
 
+/**
+ * Runs the manifest through the JSON Schema validator and returns human-readable issue strings.
+ */
 export function getManifestValidationErrors(manifest: unknown): string[] {
   const valid = validator(manifest);
 
@@ -52,10 +58,16 @@ export function getManifestValidationErrors(manifest: unknown): string[] {
   });
 }
 
+/**
+ * Provides a boolean guard for code paths that only need to know whether the manifest is schema-compliant.
+ */
 export function isValidManifest(manifest: unknown): manifest is SiteManifest {
   return getManifestValidationErrors(manifest).length === 0;
 }
 
+/**
+ * Ensures a manifest is valid before it is used elsewhere, throwing a detailed error when validation fails.
+ */
 export function validateManifest<T extends SiteManifest>(manifest: T): T {
   const issues = getManifestValidationErrors(manifest);
 

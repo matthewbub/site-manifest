@@ -39,7 +39,6 @@ After:
   key: "title",
   label: "Title",
   kind: "string",
-  input: "text",
   defaultValue: { en: "Welcome" },
 }
 ```
@@ -79,8 +78,8 @@ After:
   label: "Items",
   kind: "repeater",
   itemFields: [
-    { key: "question", label: "Question", kind: "string", input: "text" },
-    { key: "answer", label: "Answer", kind: "string", input: "textarea" },
+    { key: "question", label: "Question", kind: "string" },
+    { key: "answer", label: "Answer", kind: "string" },
   ],
   defaultItems: { en: [{ question: "Q", answer: "A" }] },
 }
@@ -91,5 +90,4 @@ After:
 1. Convert the old config into a manifest.
 2. Validate it with `validateManifest()`.
 3. Replace custom default-merging logic with `createLabelSet()`.
-4. If an editor needs widget hints, read `input` for `string` fields.
-5. Keep persisted label storage unchanged until a separate migration is needed.
+4. Keep persisted label storage unchanged until a separate migration is needed.

@@ -34,8 +34,6 @@ Formal validation for manifests.
 - `group`
 - `repeater`
 
-`input: "text" | "textarea"` is optional editor metadata, not a semantic field kind.
-
 ## Out of scope
 
 - React components

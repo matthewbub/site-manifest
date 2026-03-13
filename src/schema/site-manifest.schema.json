@@ -69,10 +69,6 @@
         "kind": {
           "type": "string",
           "const": "string"
-        },
-        "input": {
-          "type": "string",
-          "enum": ["text", "textarea"]
         }
       }
     },
@@ -115,10 +111,6 @@
         },
         "hideable": {
           "type": "boolean"
-        },
-        "input": {
-          "type": "string",
-          "enum": ["text", "textarea"]
         },
         "defaultValue": {
           "$ref": "#/$defs/localizedStringMap"
