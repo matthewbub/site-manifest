@@ -1,0 +1,37 @@
+README.md
+  f587da4ee671e145 56-57
+  593d390a9546391e 5-6,9-11,27-28,64,92-93,102-103,125-126,137-145
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.10",
+  "base_commit_sha": "d291a1a7a8863a95a6b65cdb337d643f86eeff63",
+  "prompts": {
+    "593d390a9546391e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cb0bcc4a-2137-4517-a948-f8ef39cb7efe",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "matéo! <6matbub@gmail.com>",
+      "messages": [],
+      "total_additions": 26,
+      "total_deletions": 11,
+      "accepted_lines": 24,
+      "overriden_lines": 0
+    },
+    "f587da4ee671e145": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019ce5f7-2177-71b1-849c-9e53abac7536",
+        "model": "gpt-5.4"
+      },
+      "human_author": "matéo! <6matbub@gmail.com>",
+      "messages": [],
+      "total_additions": 2,
+      "total_deletions": 6,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    }
+  }
+}
