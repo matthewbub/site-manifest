@@ -23,36 +23,26 @@ type SectionManifest = {
 
 ## Field Kinds
 
-### `text`
+### `string`
 
-Single-line label values.
-
-```ts
-{
-  key: "titleLabel",
-  label: "Title",
-  kind: "text",
-  defaultValue: {
-    en: "Welcome",
-    es: "Bienvenidos",
-  },
-}
-```
-
-### `textarea`
-
-Multi-line label values.
+String values such as titles, subtitles, descriptions, and CTA labels.
 
 ```ts
 {
   key: "descriptionLabel",
   label: "Description",
-  kind: "textarea",
+  kind: "string",
+  input: "textarea",
   defaultValue: {
     en: "Longer body copy",
   },
 }
 ```
+
+`input` is optional editor metadata. It may be:
+
+- `"text"` for a single-line control
+- `"textarea"` for a multi-line control
 
 ### `group`
 
@@ -88,8 +78,8 @@ Structured arrays of items such as FAQ entries, testimonials, or timelines.
   label: "FAQ Items",
   kind: "repeater",
   itemFields: [
-    { key: "question", label: "Question", kind: "text" },
-    { key: "answer", label: "Answer", kind: "textarea" },
+    { key: "question", label: "Question", kind: "string", input: "text" },
+    { key: "answer", label: "Answer", kind: "string", input: "textarea" },
   ],
   defaultItems: {
     en: [
@@ -104,15 +94,18 @@ Structured arrays of items such as FAQ entries, testimonials, or timelines.
 The JSON Schema enforces these core rules:
 
 - `id`, `locales`, and `sections` are required at the top level
+- `string` fields may include `defaultValue` and optional `input`
 - `group` fields must include `fields`
 - `repeater` fields must include `itemFields`
-- `repeater.itemFields` may only use `text` or `textarea`
+- `repeater.itemFields` may only use `kind: "string"`
+- `input`, when present, must be `"text"` or `"textarea"`
 - unknown field kinds fail validation
+- legacy `text` and `textarea` kinds fail validation
 - unknown top-level or section-level extra properties fail validation
 
 ## Defaulting Semantics
 
-- text-like fields read `defaultValue[locale]`
+- `string` fields read `defaultValue[locale]`
 - group children read their own `defaultValue[locale]`
 - repeater fields read `defaultItems[locale]`
 - missing defaults resolve as empty strings or empty arrays at runtime

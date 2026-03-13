@@ -57,12 +57,15 @@ This avoids repeating ad hoc default/override merge logic in each tenant runtime
 
 The field vocabulary is intentionally limited to:
 
-- `text`
-- `textarea`
+- `string`
 - `group`
 - `repeater`
 
 This keeps the contract generic and reusable. FAQ is modeled as a `repeater`, not as a hard-coded domain concept.
+
+Editor preferences such as single-line versus multi-line inputs live in optional
+metadata like `input: "text" | "textarea"`. That keeps UI conventions out of
+the core data model.
 
 ## Boundaries
 

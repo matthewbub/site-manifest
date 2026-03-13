@@ -55,7 +55,7 @@ Returns a single string field.
 
 Behavior:
 
-- intended for `text` and `textarea`
+- intended for `string` fields
 - returns `""` for unknown sections, unknown keys, or non-string values
 
 ### `group(sectionId, key)`

@@ -8,6 +8,9 @@ Framework-agnostic site manifest contract for labels and sections.
 - a typed `defineSiteManifest()` authoring API
 - a runtime `createLabelSet()` resolver for defaults + overrides
 
+Scalar labels use `kind: "string"`. If an editor needs a rendering hint, add
+`input: "text"` or `input: "textarea"` as optional metadata.
+
 ## Install
 
 ```bash
@@ -31,7 +34,8 @@ const manifest = defineSiteManifest({
         {
           key: "titleLabel",
           label: "Title",
-          kind: "text",
+          kind: "string",
+          input: "text",
           defaultValue: {
             en: "Welcome to our site",
           },
@@ -39,7 +43,8 @@ const manifest = defineSiteManifest({
         {
           key: "descriptionLabel",
           label: "Description",
-          kind: "textarea",
+          kind: "string",
+          input: "textarea",
           defaultValue: {
             en: "Built with a schema-backed contract.",
           },
@@ -67,7 +72,8 @@ const manifest = defineSiteManifest({
         {
           key: "titleLabel",
           label: "Title",
-          kind: "text",
+          kind: "string",
+          input: "text",
           defaultValue: {
             en: "FAQ",
             es: "Preguntas",
@@ -78,8 +84,8 @@ const manifest = defineSiteManifest({
           label: "FAQ Items",
           kind: "repeater",
           itemFields: [
-            { key: "question", label: "Question", kind: "text" },
-            { key: "answer", label: "Answer", kind: "textarea" },
+            { key: "question", label: "Question", kind: "string", input: "text" },
+            { key: "answer", label: "Answer", kind: "string", input: "textarea" },
           ],
           defaultItems: {
             en: [
@@ -125,7 +131,8 @@ const manifest = defineSiteManifest({
         {
           key: "titleLabel",
           label: "Title",
-          kind: "text",
+          kind: "string",
+          input: "text",
           defaultValue: {
             en: "FAQ",
             es: "Preguntas",
@@ -136,8 +143,8 @@ const manifest = defineSiteManifest({
           label: "FAQ Items",
           kind: "repeater",
           itemFields: [
-            { key: "question", label: "Question", kind: "text" },
-            { key: "answer", label: "Answer", kind: "textarea" },
+            { key: "question", label: "Question", kind: "string", input: "text" },
+            { key: "answer", label: "Answer", kind: "string", input: "textarea" },
           ],
           defaultItems: {
             en: [

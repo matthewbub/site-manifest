@@ -52,7 +52,7 @@ New:
 }
 ```
 
-### Text field
+### String field
 
 Old:
 
@@ -73,7 +73,8 @@ New:
 {
   key: "titleLabel",
   label: "Title",
-  kind: "text",
+  kind: "string",
+  input: "text",
   defaultValue: {
     en: "FAQ",
     es: "Preguntas",
@@ -104,8 +105,8 @@ New:
   label: "FAQ Items",
   kind: "repeater",
   itemFields: [
-    { key: "question", label: "Question", kind: "text" },
-    { key: "answer", label: "Answer", kind: "textarea" },
+    { key: "question", label: "Question", kind: "string", input: "text" },
+    { key: "answer", label: "Answer", kind: "string", input: "textarea" },
   ],
   defaultItems: {
     en: [...],
@@ -140,6 +141,7 @@ New:
 2. Validate the new manifest with `validateManifest()`.
 3. Replace default lookup helpers with `createLabelSet()`.
 4. Update the editor to render by `kind` instead of registry-specific switch logic.
+   - for `kind: "string"`, use `input` if a UI needs to choose between a text input and textarea
 5. Keep persisted labels unchanged until a later phase.
 
 ## What Does Not Need To Change Yet
