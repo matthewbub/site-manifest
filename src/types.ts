@@ -1,6 +1,16 @@
 export type SiteLocale = string;
 
-export type RepeaterItem = Record<string, string>;
+export type ImageValue = {
+  url: string;
+  alt?: string;
+  caption?: string;
+  desktopPosition?: string;
+  mobilePosition?: string;
+};
+
+export type RepeaterItemValue = string | ImageValue | null;
+
+export type RepeaterItem = Record<string, RepeaterItemValue>;
 
 export type StringFieldDefinition = {
   key: string;
@@ -8,6 +18,16 @@ export type StringFieldDefinition = {
   kind: "string";
   hideable?: boolean;
   defaultValue?: Partial<Record<SiteLocale, string>>;
+};
+
+export type ImageFieldDefinition = {
+  key: string;
+  label: string;
+  kind: "image";
+  hideable?: boolean;
+  withAlt?: boolean;
+  withCaption?: boolean;
+  defaultValue?: Partial<Record<SiteLocale, ImageValue | null>>;
 };
 
 export type GroupChildFieldDefinition = {
@@ -26,8 +46,16 @@ export type GroupFieldDefinition = {
 export type RepeaterItemFieldDefinition = {
   key: string;
   label: string;
-  kind: "string";
-};
+} & (
+  | {
+      kind: "string";
+    }
+  | {
+      kind: "image";
+      withAlt?: boolean;
+      withCaption?: boolean;
+    }
+);
 
 export type RepeaterFieldDefinition = {
   key: string;
@@ -40,6 +68,7 @@ export type RepeaterFieldDefinition = {
 
 export type LabelFieldDefinition =
   | StringFieldDefinition
+  | ImageFieldDefinition
   | GroupFieldDefinition
   | RepeaterFieldDefinition;
 
@@ -63,6 +92,7 @@ export type PersistedLabels = Record<string, Record<string, PersistedSectionLabe
 export type LabelSet = {
   section(sectionId: string): Record<string, unknown>;
   value(sectionId: string, key: string): string;
+  image(sectionId: string, key: string): ImageValue | null;
   group(sectionId: string, key: string): Record<string, string>;
   items(sectionId: string, key: string): RepeaterItem[];
   hidden(sectionId: string, key: string): boolean;

@@ -2,10 +2,12 @@ import { getField } from "./helpers/get-field.js";
 import { getSection } from "./helpers/get-section.js";
 import type {
   GroupChildFieldDefinition,
+  ImageValue,
   LabelSet,
   PersistedLabels,
   PersistedSectionLabels,
   RepeaterItem,
+  RepeaterItemValue,
   SiteLocale,
   SiteManifest,
 } from "./types.js";
@@ -25,10 +27,54 @@ function isStringRecord(value: unknown): value is Record<string, string> {
 }
 
 /**
+ * Narrows unknown values into the shared image object shape used by single-image fields and repeater items.
+ */
+function isImageValue(value: unknown): value is ImageValue {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return false;
+  }
+
+  const candidate = value as Record<string, unknown>;
+
+  if (typeof candidate.url !== "string" || candidate.url === "") {
+    return false;
+  }
+
+  return (
+    (candidate.alt === undefined || typeof candidate.alt === "string") &&
+    (candidate.caption === undefined || typeof candidate.caption === "string") &&
+    (candidate.desktopPosition === undefined ||
+      typeof candidate.desktopPosition === "string") &&
+    (candidate.mobilePosition === undefined ||
+      typeof candidate.mobilePosition === "string")
+  );
+}
+
+function isRepeaterItemValue(value: unknown): value is RepeaterItemValue {
+  return value === null || typeof value === "string" || isImageValue(value);
+}
+
+function isRepeaterItem(value: unknown): value is RepeaterItem {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return false;
+  }
+
+  return Object.values(value).every(isRepeaterItemValue);
+}
+
+/**
  * Normalizes persisted values so empty strings fall back to defaults the same way missing values do.
  */
 function toNonEmptyString(value: unknown): string | undefined {
   return typeof value === "string" && value !== "" ? value : undefined;
+}
+
+function toImageValue(value: unknown): ImageValue | null | undefined {
+  if (value === null) {
+    return null;
+  }
+
+  return isImageValue(value) ? value : undefined;
 }
 
 /**
@@ -55,7 +101,7 @@ function resolveGroupValue(
  */
 function parseRepeaterValue(rawValue: unknown): RepeaterItem[] | undefined {
   if (Array.isArray(rawValue)) {
-    return rawValue.filter(isStringRecord);
+    return rawValue.filter(isRepeaterItem);
   }
 
   if (typeof rawValue !== "string" || rawValue === "") {
@@ -64,7 +110,7 @@ function parseRepeaterValue(rawValue: unknown): RepeaterItem[] | undefined {
 
   try {
     const parsed = JSON.parse(rawValue) as unknown;
-    return Array.isArray(parsed) ? parsed.filter(isStringRecord) : undefined;
+    return Array.isArray(parsed) ? parsed.filter(isRepeaterItem) : undefined;
   } catch {
     return undefined;
   }
@@ -149,6 +195,12 @@ export function createLabelSet({
         continue;
       }
 
+      if (field.kind === "image") {
+        resolved[field.key] =
+          toImageValue(overrides[field.key]) ?? field.defaultValue?.[locale] ?? null;
+        continue;
+      }
+
       resolved[field.key] =
         toNonEmptyString(overrides[field.key]) ?? field.defaultValue?.[locale] ?? "";
     }
@@ -181,6 +233,12 @@ export function createLabelSet({
     value(sectionId, key) {
       const rawValue = getResolvedSection(sectionId)[key];
       return typeof rawValue === "string" ? rawValue : "";
+    },
+
+    /** Returns a single image value for a field, defaulting to null for missing or invalid values. */
+    image(sectionId, key) {
+      const rawValue = getResolvedSection(sectionId)[key];
+      return isImageValue(rawValue) ? rawValue : null;
     },
 
     /** Returns the resolved child values for a group field. */

@@ -35,6 +35,46 @@
         "type": "string"
       }
     },
+    "imageValue": {
+      "type": "object",
+      "required": ["url"],
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "type": "string",
+          "minLength": 1
+        },
+        "alt": {
+          "type": "string"
+        },
+        "caption": {
+          "type": "string"
+        },
+        "desktopPosition": {
+          "type": "string"
+        },
+        "mobilePosition": {
+          "type": "string"
+        }
+      }
+    },
+    "localizedImageMap": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1
+      },
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/imageValue"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
     "groupChildField": {
       "type": "object",
       "required": ["key", "label"],
@@ -54,23 +94,52 @@
       }
     },
     "repeaterItemField": {
-      "type": "object",
-      "required": ["key", "label", "kind"],
-      "additionalProperties": false,
-      "properties": {
-        "key": {
-          "type": "string",
-          "minLength": 1
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["key", "label", "kind"],
+          "additionalProperties": false,
+          "properties": {
+            "key": {
+              "type": "string",
+              "minLength": 1
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1
+            },
+            "kind": {
+              "type": "string",
+              "const": "string"
+            }
+          }
         },
-        "label": {
-          "type": "string",
-          "minLength": 1
-        },
-        "kind": {
-          "type": "string",
-          "const": "string"
+        {
+          "type": "object",
+          "required": ["key", "label", "kind"],
+          "additionalProperties": false,
+          "properties": {
+            "key": {
+              "type": "string",
+              "minLength": 1
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1
+            },
+            "kind": {
+              "type": "string",
+              "const": "image"
+            },
+            "withAlt": {
+              "type": "boolean"
+            },
+            "withCaption": {
+              "type": "boolean"
+            }
+          }
         }
-      }
+      ]
     },
     "repeaterItemsByLocale": {
       "type": "object",
@@ -87,7 +156,17 @@
             "minLength": 1
           },
           "additionalProperties": {
-            "type": "string"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/$defs/imageValue"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         }
       }
@@ -114,6 +193,37 @@
         },
         "defaultValue": {
           "$ref": "#/$defs/localizedStringMap"
+        }
+      }
+    },
+    "imageField": {
+      "type": "object",
+      "required": ["key", "label", "kind"],
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "const": "image"
+        },
+        "hideable": {
+          "type": "boolean"
+        },
+        "withAlt": {
+          "type": "boolean"
+        },
+        "withCaption": {
+          "type": "boolean"
+        },
+        "defaultValue": {
+          "$ref": "#/$defs/localizedImageMap"
         }
       }
     },
@@ -179,6 +289,9 @@
       "oneOf": [
         {
           "$ref": "#/$defs/stringField"
+        },
+        {
+          "$ref": "#/$defs/imageField"
         },
         {
           "$ref": "#/$defs/groupField"

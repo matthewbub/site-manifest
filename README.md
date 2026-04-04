@@ -17,12 +17,13 @@ pnpm add site-manifest
 ## Mental model
 
 - `string` = one label
+- `image` = one media object
 - `group` = keyed labels
 - `repeater` = array of structured items
 
 ## Define fields
 
-Each label field has a `kind` that determines its shape. A `string` holds a single localised value, a `group` holds named key-value pairs, and a `repeater` holds an ordered list of structured items.
+Each label field has a `kind` that determines its shape. A `string` holds a single localised value, an `image` holds a media object, a `group` holds named key-value pairs, and a `repeater` holds an ordered list of structured items.
 
 ```ts
 {
@@ -30,6 +31,23 @@ Each label field has a `kind` that determines its shape. A `string` holds a sing
   label: "Title",
   kind: "string",
   defaultValue: { en: "Welcome" },
+}
+```
+
+```ts
+{
+  key: "heroImage",
+  label: "Hero Image",
+  kind: "image",
+  withAlt: true,
+  withCaption: true,
+  defaultValue: {
+    en: {
+      url: "https://example.com/hero.jpg",
+      alt: "Couple portrait",
+      caption: "Summer engagement session",
+    },
+  },
 }
 ```
 
@@ -51,8 +69,14 @@ Each label field has a `kind` that determines its shape. A `string` holds a sing
   label: "Items",
   kind: "repeater",
   itemFields: [
-    { key: "question", label: "Question", kind: "string" },
-    { key: "answer", label: "Answer", kind: "string" },
+    {
+      key: "image",
+      label: "Image",
+      kind: "image",
+      withAlt: true,
+      withCaption: true,
+    },
+    { key: "caption", label: "Caption", kind: "string" },
   ],
 }
 ```
@@ -118,16 +142,19 @@ labelSet.value("hero", "title");
 // "Hello"
 ```
 
-## Resolve groups and repeaters
+## Resolve images, groups, and repeaters
 
-Groups return a flat key-value object; repeaters return an array of objects keyed by each item field.
+Images return a single media object or `null`. Groups return a flat key-value object; repeaters return an array of objects keyed by each item field.
 
 ```ts
+labelSet.image("hero", "heroImage");
+// { url: "...", alt: "...", caption: "..." }
+
 labelSet.group("navigation", "links");
 // { home: "Home", features: "Features" }
 
 labelSet.items("faq", "items");
-// [{ question: "Question", answer: "Answer" }]
+// [{ image: { url: "..." }, caption: "Question" }]
 ```
 
 ## API

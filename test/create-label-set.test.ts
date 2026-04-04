@@ -74,6 +74,63 @@ const manifest = defineSiteManifest({
         },
       ],
     },
+    {
+      id: "ourStory",
+      title: "Our Story",
+      enabledByDefault: true,
+      labels: [
+        {
+          key: "heroImage",
+          label: "Image",
+          kind: "image",
+          withAlt: true,
+          withCaption: true,
+          defaultValue: {
+            en: {
+              url: "https://example.com/default-story.jpg",
+              alt: "Default story image",
+              caption: "Default caption",
+              desktopPosition: "center",
+              mobilePosition: "top",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "gallery",
+      title: "Gallery",
+      enabledByDefault: true,
+      labels: [
+        {
+          key: "items",
+          label: "Items",
+          kind: "repeater",
+          itemFields: [
+            {
+              key: "image",
+              label: "Image",
+              kind: "image",
+              withAlt: true,
+              withCaption: true,
+            },
+            { key: "title", label: "Title", kind: "string" },
+          ],
+          defaultItems: {
+            en: [
+              {
+                image: {
+                  url: "https://example.com/gallery-1.jpg",
+                  alt: "Gallery image 1",
+                  caption: "First image",
+                },
+                title: "First",
+              },
+            ],
+          },
+        },
+      ],
+    },
   ],
 });
 
@@ -128,6 +185,44 @@ describe("createLabelSet", () => {
     });
   });
 
+  it("resolves image defaults and object overrides", () => {
+    const labelSetWithDefaults = createLabelSet({
+      manifest,
+      locale: "en",
+      labels: {},
+    });
+
+    expect(labelSetWithDefaults.image("ourStory", "heroImage")).toEqual({
+      url: "https://example.com/default-story.jpg",
+      alt: "Default story image",
+      caption: "Default caption",
+      desktopPosition: "center",
+      mobilePosition: "top",
+    });
+
+    const labelSetWithOverrides = createLabelSet({
+      manifest,
+      locale: "en",
+      labels: {
+        en: {
+          ourStory: {
+            heroImage: {
+              url: "https://example.com/custom-story.jpg",
+              alt: "Custom image",
+              caption: "Custom caption",
+            },
+          },
+        },
+      },
+    });
+
+    expect(labelSetWithOverrides.image("ourStory", "heroImage")).toEqual({
+      url: "https://example.com/custom-story.jpg",
+      alt: "Custom image",
+      caption: "Custom caption",
+    });
+  });
+
   it("returns repeater defaults and parses repeater overrides", () => {
     const labelSetWithDefaults = createLabelSet({
       manifest,
@@ -155,6 +250,55 @@ describe("createLabelSet", () => {
 
     expect(labelSetWithOverrides.items("faq", "faqItems")).toEqual([
       { question: "When?", answer: "At 4pm" },
+    ]);
+  });
+
+  it("supports repeater items that include image objects", () => {
+    const labelSetWithDefaults = createLabelSet({
+      manifest,
+      locale: "en",
+      labels: {},
+    });
+
+    expect(labelSetWithDefaults.items("gallery", "items")).toEqual([
+      {
+        image: {
+          url: "https://example.com/gallery-1.jpg",
+          alt: "Gallery image 1",
+          caption: "First image",
+        },
+        title: "First",
+      },
+    ]);
+
+    const labelSetWithOverrides = createLabelSet({
+      manifest,
+      locale: "en",
+      labels: {
+        en: {
+          gallery: {
+            items: JSON.stringify([
+              {
+                image: {
+                  url: "https://example.com/gallery-2.jpg",
+                  alt: "Gallery image 2",
+                },
+                title: "Second",
+              },
+            ]),
+          },
+        },
+      },
+    });
+
+    expect(labelSetWithOverrides.items("gallery", "items")).toEqual([
+      {
+        image: {
+          url: "https://example.com/gallery-2.jpg",
+          alt: "Gallery image 2",
+        },
+        title: "Second",
+      },
     ]);
   });
 
@@ -243,6 +387,7 @@ describe("createLabelSet", () => {
 
     expect(labelSet.section("missing")).toEqual({});
     expect(labelSet.value("missing", "title")).toBe("");
+    expect(labelSet.image("missing", "image")).toBeNull();
     expect(labelSet.group("missing", "group")).toEqual({});
     expect(labelSet.items("missing", "items")).toEqual([]);
     expect(labelSet.hidden("missing", "hidden")).toBe(false);

@@ -1,6 +1,8 @@
 export type {
   GroupChildFieldDefinition,
   GroupFieldDefinition,
+  ImageFieldDefinition,
+  ImageValue,
   LabelFieldDefinition,
   LabelSet,
   PersistedLabels,
@@ -8,6 +10,7 @@ export type {
   RepeaterFieldDefinition,
   RepeaterItem,
   RepeaterItemFieldDefinition,
+  RepeaterItemValue,
   SectionManifest,
   SiteLocale,
   SiteManifest,

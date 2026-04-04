@@ -38,6 +38,29 @@ String values such as titles, subtitles, descriptions, and CTA labels.
 }
 ```
 
+### `image`
+
+Media objects such as hero images, story photos, gallery items, or team member portraits.
+
+```ts
+{
+  key: "heroImage",
+  label: "Hero Image",
+  kind: "image",
+  withAlt: true,
+  withCaption: true,
+  defaultValue: {
+    en: {
+      url: "https://example.com/hero.jpg",
+      alt: "Couple portrait",
+      caption: "Summer engagement session",
+      desktopPosition: "center",
+      mobilePosition: "top",
+    },
+  },
+}
+```
+
 ### `group`
 
 Nested string maps such as navigation labels.
@@ -72,12 +95,15 @@ Structured arrays of items such as FAQ entries, testimonials, or timelines.
   label: "FAQ Items",
   kind: "repeater",
   itemFields: [
-    { key: "question", label: "Question", kind: "string" },
-    { key: "answer", label: "Answer", kind: "string" },
+    { key: "image", label: "Image", kind: "image", withAlt: true },
+    { key: "caption", label: "Caption", kind: "string" },
   ],
   defaultItems: {
     en: [
-      { question: "When?", answer: "At 4pm" },
+      {
+        image: { url: "https://example.com/photo.jpg", alt: "Gallery image" },
+        caption: "At sunset",
+      },
     ],
   },
 }
@@ -89,9 +115,10 @@ The JSON Schema enforces these core rules:
 
 - `id`, `locales`, and `sections` are required at the top level
 - `string` fields may include `defaultValue`
+- `image` fields may include `defaultValue`
 - `group` fields must include `fields`
 - `repeater` fields must include `itemFields`
-- `repeater.itemFields` may only use `kind: "string"`
+- `repeater.itemFields` may use `kind: "string"` or `kind: "image"`
 - unknown field kinds fail validation
 - legacy `text` and `textarea` kinds fail validation
 - unknown top-level or section-level extra properties fail validation
@@ -99,6 +126,7 @@ The JSON Schema enforces these core rules:
 ## Defaulting Semantics
 
 - `string` fields read `defaultValue[locale]`
+- `image` fields read `defaultValue[locale]`
 - group children read their own `defaultValue[locale]`
 - repeater fields read `defaultItems[locale]`
-- missing defaults resolve as empty strings or empty arrays at runtime
+- missing defaults resolve as empty strings, `null`, or empty arrays at runtime

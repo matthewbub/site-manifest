@@ -14,6 +14,26 @@ describe("validateManifest", () => {
       locales: ["en", "es"],
       sections: [
         {
+          id: "story",
+          title: "Story",
+          enabledByDefault: true,
+          labels: [
+            {
+              key: "heroImage",
+              label: "Hero Image",
+              kind: "image",
+              withAlt: true,
+              withCaption: true,
+              defaultValue: {
+                en: {
+                  url: "https://example.com/story.jpg",
+                  alt: "Story photo",
+                },
+              },
+            },
+          ],
+        },
+        {
           id: "faq",
           title: "FAQ",
           enabledByDefault: true,
@@ -25,6 +45,7 @@ describe("validateManifest", () => {
               itemFields: [
                 { key: "question", label: "Question", kind: "string" },
                 { key: "answer", label: "Answer", kind: "string" },
+                { key: "image", label: "Image", kind: "image", withAlt: true },
               ],
             },
           ],

@@ -17,6 +17,20 @@ export const exampleManifest = defineSiteManifest({
             en: "Welcome",
           },
         },
+        {
+          key: "image",
+          label: "Image",
+          kind: "image",
+          withAlt: true,
+          withCaption: true,
+          defaultValue: {
+            en: {
+              url: "https://example.com/welcome.jpg",
+              alt: "Welcome image",
+              caption: "A sample hero image",
+            },
+          },
+        },
       ],
     },
     {
@@ -55,12 +69,17 @@ export const exampleManifest = defineSiteManifest({
           itemFields: [
             { key: "question", label: "Question", kind: "string" },
             { key: "answer", label: "Answer", kind: "string" },
+            { key: "image", label: "Image", kind: "image", withAlt: true },
           ],
           defaultItems: {
             en: [
               {
                 question: "Question",
                 answer: "Answer",
+                image: {
+                  url: "https://example.com/faq.jpg",
+                  alt: "FAQ image",
+                },
               },
             ],
           },

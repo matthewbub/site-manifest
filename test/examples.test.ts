@@ -35,6 +35,11 @@ describe("examples", () => {
     });
 
     expect(labelSet.value("hero", "title")).toBe("Hello");
+    expect(labelSet.image("hero", "image")).toEqual({
+      url: "https://example.com/welcome.jpg",
+      alt: "Welcome image",
+      caption: "A sample hero image",
+    });
     expect(labelSet.group("navigation", "links")).toEqual({
       home: "Home",
       features: "Product",

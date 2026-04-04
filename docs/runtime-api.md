@@ -17,8 +17,9 @@ createLabelSet({
 type LabelSet = {
   section(sectionId: string): Record<string, unknown>;
   value(sectionId: string, key: string): string;
+  image(sectionId: string, key: string): ImageValue | null;
   group(sectionId: string, key: string): Record<string, string>;
-  items(sectionId: string, key: string): Array<Record<string, string>>;
+  items(sectionId: string, key: string): Array<Record<string, string | ImageValue | null>>;
   hidden(sectionId: string, key: string): boolean;
 };
 ```
@@ -33,6 +34,15 @@ labelSet.value("hero", "title");
 ```
 
 Returns `""` for missing or non-string fields.
+
+### `image()`
+
+```ts
+labelSet.image("hero", "heroImage");
+// { url: "https://example.com/hero.jpg", alt: "Couple portrait" }
+```
+
+Returns `null` for missing or non-image fields.
 
 ### `group()`
 
