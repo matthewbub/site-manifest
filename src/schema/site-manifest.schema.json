@@ -111,6 +111,9 @@
             "kind": {
               "type": "string",
               "const": "string"
+            },
+            "multiline": {
+              "type": "boolean"
             }
           }
         },
@@ -189,6 +192,9 @@
           "const": "string"
         },
         "hideable": {
+          "type": "boolean"
+        },
+        "multiline": {
           "type": "boolean"
         },
         "defaultValue": {
@@ -272,6 +278,14 @@
         },
         "hideable": {
           "type": "boolean"
+        },
+        "minItems": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maxItems": {
+          "type": "integer",
+          "minimum": 0
         },
         "itemFields": {
           "type": "array",

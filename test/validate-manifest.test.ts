@@ -42,9 +42,10 @@ describe("validateManifest", () => {
               key: "faqItems",
               label: "FAQ Items",
               kind: "repeater",
+              maxItems: 8,
               itemFields: [
                 { key: "question", label: "Question", kind: "string" },
-                { key: "answer", label: "Answer", kind: "string" },
+                { key: "answer", label: "Answer", kind: "string", multiline: true },
                 { key: "image", label: "Image", kind: "image", withAlt: true },
               ],
             },
@@ -179,6 +180,80 @@ describe("validateManifest", () => {
 
     expect(isValidManifest(manifest)).toBe(false);
     expect(getManifestValidationErrors(manifest).some((issue) => issue.includes("must NOT have additional properties"))).toBe(true);
+  });
+
+  it("accepts multiline strings and repeater item limits as editor hints", () => {
+    const manifest = {
+      id: "site",
+      locales: ["en"],
+      sections: [
+        {
+          id: "story",
+          title: "Story",
+          enabledByDefault: true,
+          labels: [
+            {
+              key: "body",
+              label: "Body",
+              kind: "string",
+              multiline: true,
+              defaultValue: {
+                en: "Long-form copy",
+              },
+            },
+            {
+              key: "gallery",
+              label: "Gallery",
+              kind: "repeater",
+              minItems: 0,
+              maxItems: 8,
+              itemFields: [
+                {
+                  key: "caption",
+                  label: "Caption",
+                  kind: "string",
+                  multiline: true,
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(isValidManifest(manifest)).toBe(true);
+  });
+
+  it("rejects invalid repeater item limits", () => {
+    const manifest = {
+      id: "site",
+      locales: ["en"],
+      sections: [
+        {
+          id: "gallery",
+          title: "Gallery",
+          enabledByDefault: true,
+          labels: [
+            {
+              key: "items",
+              label: "Items",
+              kind: "repeater",
+              maxItems: -1,
+              itemFields: [
+                { key: "caption", label: "Caption", kind: "string" },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(isValidManifest(manifest)).toBe(false);
+    expect(
+      getManifestValidationErrors(manifest).some((issue) =>
+        issue.includes("must be >= 0"),
+      ),
+    ).toBe(true);
   });
 
   it("rejects legacy text and textarea field kinds", () => {

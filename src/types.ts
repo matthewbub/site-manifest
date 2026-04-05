@@ -17,6 +17,7 @@ export type StringFieldDefinition = {
   label: string;
   kind: "string";
   hideable?: boolean;
+  multiline?: boolean;
   defaultValue?: Partial<Record<SiteLocale, string>>;
 };
 
@@ -49,6 +50,7 @@ export type RepeaterItemFieldDefinition = {
 } & (
   | {
       kind: "string";
+      multiline?: boolean;
     }
   | {
       kind: "image";
@@ -62,6 +64,8 @@ export type RepeaterFieldDefinition = {
   label: string;
   kind: "repeater";
   hideable?: boolean;
+  minItems?: number;
+  maxItems?: number;
   itemFields: RepeaterItemFieldDefinition[];
   defaultItems?: Partial<Record<SiteLocale, RepeaterItem[]>>;
 };

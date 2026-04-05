@@ -66,9 +66,10 @@ export const exampleManifest = defineSiteManifest({
           key: "items",
           label: "Items",
           kind: "repeater",
+          maxItems: 8,
           itemFields: [
             { key: "question", label: "Question", kind: "string" },
-            { key: "answer", label: "Answer", kind: "string" },
+            { key: "answer", label: "Answer", kind: "string", multiline: true },
             { key: "image", label: "Image", kind: "image", withAlt: true },
           ],
           defaultItems: {
