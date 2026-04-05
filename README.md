@@ -27,10 +27,11 @@ Each label field has a `kind` that determines its shape. A `string` holds a sing
 
 ```ts
 {
-  key: "title",
-  label: "Title",
+  key: "description",
+  label: "Description",
   kind: "string",
-  defaultValue: { en: "Welcome" },
+  multiline: true,
+  defaultValue: { en: "Longer body copy" },
 }
 ```
 
@@ -68,6 +69,7 @@ Each label field has a `kind` that determines its shape. A `string` holds a sing
   key: "items",
   label: "Items",
   kind: "repeater",
+  maxItems: 8,
   itemFields: [
     {
       key: "image",
@@ -76,7 +78,7 @@ Each label field has a `kind` that determines its shape. A `string` holds a sing
       withAlt: true,
       withCaption: true,
     },
-    { key: "caption", label: "Caption", kind: "string" },
+    { key: "caption", label: "Caption", kind: "string", multiline: true },
   ],
 }
 ```

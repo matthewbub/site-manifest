@@ -39,6 +39,7 @@ After:
   key: "title",
   label: "Title",
   kind: "string",
+  multiline: true,
   defaultValue: { en: "Welcome" },
 }
 ```
@@ -77,9 +78,10 @@ After:
   key: "items",
   label: "Items",
   kind: "repeater",
+  maxItems: 8,
   itemFields: [
     { key: "question", label: "Question", kind: "string" },
-    { key: "answer", label: "Answer", kind: "string" },
+    { key: "answer", label: "Answer", kind: "string", multiline: true },
   ],
   defaultItems: { en: [{ question: "Q", answer: "A" }] },
 }

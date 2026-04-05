@@ -32,6 +32,7 @@ String values such as titles, subtitles, descriptions, and CTA labels.
   key: "descriptionLabel",
   label: "Description",
   kind: "string",
+  multiline: true,
   defaultValue: {
     en: "Longer body copy",
   },
@@ -94,9 +95,10 @@ Structured arrays of items such as FAQ entries, testimonials, or timelines.
   key: "faqItems",
   label: "FAQ Items",
   kind: "repeater",
+  maxItems: 8,
   itemFields: [
     { key: "image", label: "Image", kind: "image", withAlt: true },
-    { key: "caption", label: "Caption", kind: "string" },
+    { key: "caption", label: "Caption", kind: "string", multiline: true },
   ],
   defaultItems: {
     en: [
@@ -115,10 +117,13 @@ The JSON Schema enforces these core rules:
 
 - `id`, `locales`, and `sections` are required at the top level
 - `string` fields may include `defaultValue`
+- `string` fields may include `multiline`
 - `image` fields may include `defaultValue`
 - `group` fields must include `fields`
 - `repeater` fields must include `itemFields`
+- `repeater` fields may include `minItems` and `maxItems`
 - `repeater.itemFields` may use `kind: "string"` or `kind: "image"`
+- string repeater item fields may include `multiline`
 - unknown field kinds fail validation
 - legacy `text` and `textarea` kinds fail validation
 - unknown top-level or section-level extra properties fail validation
@@ -129,4 +134,5 @@ The JSON Schema enforces these core rules:
 - `image` fields read `defaultValue[locale]`
 - group children read their own `defaultValue[locale]`
 - repeater fields read `defaultItems[locale]`
+- `multiline`, `minItems`, and `maxItems` are editor hints and do not affect runtime resolution
 - missing defaults resolve as empty strings, `null`, or empty arrays at runtime

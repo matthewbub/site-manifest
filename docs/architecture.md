@@ -31,6 +31,7 @@ Formal validation for manifests.
 ## Core vocabulary
 
 - `string`
+- `image`
 - `group`
 - `repeater`
 
