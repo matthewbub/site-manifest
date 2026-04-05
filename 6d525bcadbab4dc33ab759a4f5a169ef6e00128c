@@ -1,0 +1,21 @@
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "6d525bcadbab4dc33ab759a4f5a169ef6e00128c",
+  "prompts": {
+    "8c7bc082537647df": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "32dcb39e-d45f-4d08-b8bd-c4d2fb2470fc",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "matéo!",
+      "messages": [],
+      "total_additions": 868,
+      "total_deletions": 421,
+      "accepted_lines": 0,
+      "overriden_lines": 0
+    }
+  }
+}
